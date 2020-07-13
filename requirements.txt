@@ -10,6 +10,7 @@ cssselect==1.1.0
 cycler==0.10.0
 fake-useragent==0.1.11
 idna==2.10
+int-date==0.1.8
 kiwisolver==1.2.0
 lxml==4.5.2
 matplotlib==3.2.2
@@ -31,6 +32,7 @@ requests-html==0.10.0
 simplejson==3.17.0
 six==1.15.0
 soupsieve==2.0.1
+stockstats==0.3.1
 toml==0.10.1
 tqdm==4.47.0
 typed-ast==1.4.1
