@@ -29,7 +29,7 @@ class Stock:
 
     # returns all daily price information about the stock
     def getData(self, start_date, end_date):
-        return yf.get_data(self.stock, start_date=start_date, end_date=end_date)
+        return yf.get_data(self.stock, start_date = start_date, end_date = end_date)
 
     # set rsi_12 to false for rsi 6 day calculation, defaults to 12 day calculation
     def getRSI(self, n = 200, rsi_12 = True):
@@ -54,10 +54,11 @@ class Stock:
         macd = StockDataFrame(stock_data).get('macd')[-1]
         return macd
 
-
+'''
 # example for using the above class
 if __name__ == '__main__':
     microsoft = Stock('MSFT')
     print('price:', microsoft.getPrice())
     print('rsi:', microsoft.getRSI())
     print('macd:', microsoft.getMACD())
+'''
