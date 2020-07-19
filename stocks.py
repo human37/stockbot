@@ -11,7 +11,6 @@ from ssl import create_default_context
 class Stock:
 
     def __init__(self, stock):
-
         self.stock = stock
         self.undervalued = False
         self.overvalued = False
@@ -19,26 +18,22 @@ class Stock:
         self.gaining_momentum = False
 
     def setUndervalued(self):
-
         if self.undervalued == False:
             self.undervalued = True
             return True
         return False
 
     def setOvervalued(self):
-
         if self.overvalued == False:
             self.overvalued = True
             return True
         return False
 
     def resetValue(self):
-
         self.undervalued = False
         self.overvalued = False
 
     def setLoosingMomentum(self):
-
         if self.loosing_momentum == False:
             self.loosing_momentum = True
             self.gaining_momentum = False
@@ -46,7 +41,6 @@ class Stock:
         return False
 
     def setGainingMomentum(self):
-
         if self.gaining_momentum == False:
             self.gaining_momentum = True
             self.loosing_momentum = False
@@ -54,35 +48,28 @@ class Stock:
         return False
 
     def resetMomentum(self):
-
         self.loosing_momentum = False
         self.gaining_momentum = False
 
     def getName(self):
-
         return self.stock
 
     def getPrice(self):
-
         return yf.get_live_price(self.stock)
 
     def getEarnings(self):
-
         return yf.get_earnings(self.stock)
 
     # set yearly=False for quarterly data
     def getCashFlow(self, yearly):
-
         return yf.get_cash_flow(self.stock, yearly)
 
     # returns the income statement, balancesheet, and cashflow. requires boolean parameters for yearly or quarterly data
     def getFinancials(self, yearly, quarterly):
-
         return yf.get_financials(self.stock, yearly, quarterly)
 
     # returns all daily price information about the stock
     def getData(self, start_date, end_date):
-
         return yf.get_data(self.stock, start_date = start_date, end_date = end_date)
 
     # set rsi_12 to false for rsi 6 day calculation, defaults to 12 day calculation
@@ -120,11 +107,9 @@ class Stock:
 class StockManager:
 
     def __init__(self, stocks):
-
         self.stocks_list = stocks
 
     def checkRSI(self):
-
         stock_changes = []
         for stock in self.stocks_list:
             rsi = float(stock.getRSI())
@@ -140,7 +125,6 @@ class StockManager:
         return stock_changes
 
     def checkMACD(self):
-
         stock_changes = []
         for stock in self.stocks_list:
             macd = float(stock.getMACD())
@@ -156,7 +140,6 @@ class StockManager:
 class User:
 
     def __init__(self, stock_manager, email_address):
-
         self.manager = stock_manager
         self.email = email_address
     
@@ -169,17 +152,35 @@ class User:
             server.login('dev.acc3025934@gmail.com', password)
             server.sendmail('dev.acc3025934@gmail.com', self.email, message)
     
-    def getStockManager(self):
-
-        return self.manager
-
-
-'''
-# example for using the above class
-if __name__ == '__main__':
-    microsoft = Stock('MSFT')
-    print('price:', microsoft.getPrice())
-    print('rsi:', microsoft.getRSI())
-    print('macd:', microsoft.getMACD())
-    print('signal:', microsoft.getSignal())
-'''
+    def checkStocks(self):
+        # checks the indicators on all the stocks in the stockmanager object, and sends an email if any of them have changed
+        print('Running...')
+        rsi_changes = self.manager.checkRSI()
+        macd_changes = self.manager.checkMACD()
+        email_message = 'Subject: StockBot Update ' + str(datetime.now().time()) + ': \n'
+        updates = False
+        if len(rsi_changes) != 0:
+            for change in rsi_changes:
+                stock = change['stock']
+                value = change['status']
+                message = stock.getName() + ' is now ' + value + '!'
+                price = ' (price $' + str(round(stock.getPrice(), 2)) + ')\n'
+                email_message += message 
+                email_message += price
+            updates = True
+        if len(macd_changes) != 0:
+            for change in macd_changes:
+                stock = change['stock']
+                value = change['status']
+                message = stock.getName() + ' is now ' + value + ' momentum!'
+                price = ' (price $' + str(round(stock.getPrice(), 2)) + ')\n'
+                email_message += message
+                email_message += price
+            updates = True
+        if updates:
+            print('New message information!')
+            print('Sending email...')
+            self.sendEmail(email_message)
+            print('Email sent successfully.')
+        else:
+            print('No message to send at this moment.')
