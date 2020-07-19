@@ -1,14 +1,47 @@
-from stocks import Stock
-from smtplib import SMTP_SSL
-from ssl import create_default_context
+from stocks import Stock, StockManager, User
+from time import sleep
 
-def sendEmail(message):
+
+if __name__ == '__main__':
     
-    with open('/Users/ammontaylor/logins/passwords.txt', 'r') as f:
-        for line in f:
-            password = line.strip()
-    context = create_default_context()
-    with SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login('dev.acc3025934@gmail.com', password)
-        server.sendmail('dev.acc3025934@gmail.com', 'ammonx9@gmail.com', message)
+    tesla = Stock('TSLA')
+    microsoft = Stock('MSFT')
 
+    ammons_stocks = StockManager([tesla, microsoft])
+
+    ammon = User(ammons_stocks, 'ammonx9@gmail.com')
+
+    while True:
+
+        print('Running...')
+        rsi_changes = ammon.getStockManager().checkRSI()
+        macd_changes = ammon.getStockManager().checkMACD()
+        email_message = ''
+
+        if len(rsi_changes) != 0:
+            for change in rsi_changes:
+                stock = change['stock']
+                value = change['status']
+                message = stock.getName() + ' is now ' + value + '!\n'
+                price = stock.getName() + ' price is currently $' + str(round(stock.getPrice(), 2)) + '\n'
+                email_message += message
+                email_message += price
+                
+        if len(macd_changes) != 0:
+            for change in macd_changes:
+                stock = change['stock']
+                value = change['status']
+                message = stock.getName() + ' is now ' + value + ' momentum!\n'
+                price = stock.getName() + ' price is currently $' + str(round(stock.getPrice(), 2)) + '\n'
+                email_message += message
+                email_message += price
+
+        if len(email_message) != 0:
+            print('New message information:')
+            print(email_message)
+            ammon.sendEmail(email_message)
+            print('Email sent successfully.')
+        else:
+            print('No message to send at this moment.')
+        
+        sleep(120)
