@@ -4,12 +4,20 @@ from time import sleep
 
 if __name__ == '__main__':
 
-    tesla = Stock('TSLA')
-    microsoft = Stock('MSFT')
-    ammons_stocks = StockManager([tesla, microsoft])
+    ammons_stocks = StockManager(
+        [
+            Stock('TSLA'),
+            Stock('TWTR'),
+            Stock('F'),
+            Stock('AAPL'),
+            Stock('ACB'),
+            Stock('SNAP'),
+            Stock('BABA')
+        ]
+    )
     ammon = User(ammons_stocks, 'ammonx9@gmail.com')
 
     while True:
         # checks all stocks in StockManager, cycles every minute
         ammon.checkStocks()
-        time.sleep(60)
+        sleep(60)
